@@ -15,7 +15,7 @@ namespace VanillaSkillsExpandedExpanded
 {
     public class ExpandedSkillsSettings : ModSettings
     {
-        public int GlobalXpRequirement = 270000;
+        public int GlobalXpRequirement = 100;
 
         public override void ExposeData()
         {
