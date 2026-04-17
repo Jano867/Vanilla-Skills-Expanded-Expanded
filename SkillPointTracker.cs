@@ -1,12 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Verse;
 
 namespace VanillaSkillsExpandedExpanded
 {
-    public class SkillPointTracker
+    public class SkillPointTracker : IExposable
     {
+        public float trackedGlobalXp;
+        public int availableSkillPoints;
+        public List<int> claimedMilestones=new List<int>();
+
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref trackedGlobalXp, "trackedGlobalXp",0f);
+            Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints",0);
+            Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones",LookMode.Value);
+
+            if (claimedMilestones == null)
+            {
+                claimedMilestones = new List<int>();
+            }
+        }
+
+        public void AddGlobalXp(float xp)
+        {
+            if (xp <= 0f)
+            {
+                return;
+            }
+            trackedGlobalXp += xp;
+        }
+        
+        public bool HasClaimedMilestone(int milestoneId)
+        {
+            return claimedMilestones.Contains(milestoneId);
+        }
+
+        public void ClaimMilestone(int milestoneId)
+        {
+            if (!claimedMilestones.Contains(milestoneId))
+            {
+                claimedMilestones.Add(milestoneId);
+            }
+        }
+        
+        public bool AwardPointForMilestone(float milestoneValue, int milestoneId)
+        {
+            if (HasClaimedMilestone(milestoneId))
+            {
+                return false;
+            }
+            if (trackedGlobalXp< milestoneValue)
+            {
+                return false;
+            }
+
+            availableSkillPoints++;
+            ClaimMilestone(milestoneId);
+            return true;
+        }
+
+        public int TotalSkillPointsEarned()
+        {
+            return claimedMilestones.Count;
+        }
     }
 }
