@@ -46,6 +46,8 @@ namespace VanillaSkillsExpandedExpanded
                 return;
             }
             tracker.AddGlobalXp(xp);
+            Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Global XP Requirement: {ExpandedSkillsMod.Settings.GlobalXpRequirement}, Progress: {tracker.trackedGlobalXp}/{ExpandedSkillsMod.Settings.GlobalXpRequirement}");
+            
         }
     }
 }
