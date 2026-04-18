@@ -8,7 +8,7 @@ namespace VanillaSkillsExpandedExpanded
     public static class SkillPointTrackers
     {
         private static readonly Dictionary<Pawn_SkillTracker, SkillPointTracker> trackers = new Dictionary<Pawn_SkillTracker, SkillPointTracker>();
-
+        
 
         public static SkillPointTracker GetTracker(Pawn pawn)
         {

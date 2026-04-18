@@ -55,11 +55,20 @@ namespace VanillaSkillsExpandedExpanded
 
             if (tracker.AwardPointForMilestone(ExpandedSkillsMod.Settings.GlobalXpRequirement, 0))
             {
-                Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort} "+
-                    $"Available Skill Points: {tracker.availableSkillPoints}");
+                Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort} Available Skill Points: {tracker.availableSkillPoints}");
                 ExpandedSkillsMod.Settings.GlobalXpRequirement *= 2;
             }
+            if(__instance.GetLevel()>=15)
+            {
+                string skillDefName = __instance.def.defName;
 
+                if (!tracker.HasClaimedLevel15Skill(skillDefName))
+                {
+                    tracker.availableSkillPoints++;
+                    tracker.ClaimLevel15Skill(skillDefName);
+                    Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort} Available Skill Points: {tracker.availableSkillPoints}");
+                }
+            }
 
             Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Global XP Requirement: {ExpandedSkillsMod.Settings.GlobalXpRequirement}, Progress: {tracker.trackedGlobalXp}/{ExpandedSkillsMod.Settings.GlobalXpRequirement}");
             
@@ -94,10 +103,15 @@ namespace VanillaSkillsExpandedExpanded
             }
             
             SkillPointTracker tracker = SkillPointTrackers.GetTracker(__instance.Pawn);
+            if (tracker.availableSkillPoints == null)
+            {
+                return;
+            }
+            
             if (tracker.availableSkillPoints > 0)
             {
                 tracker.availableSkillPoints--;
-                Log.Message($"Pawn: {__instance.Pawn}, Skill Point Subtracted, New Total Skill Points: {tracker.availableSkillPoints}");
+                Log.Message($"Pawn: {__instance.Pawn.LabelShort}, Skill Point Subtracted, New Total Skill Points: {tracker.availableSkillPoints}");
             }
         }
         

@@ -8,6 +8,7 @@ namespace VanillaSkillsExpandedExpanded
         public float trackedGlobalXp;
         public int availableSkillPoints;
         public List<int> claimedMilestones=new List<int>();
+        public List<string> claimedLevel15Skills = new List<string>();
 
 
         public void ExposeData()
@@ -15,7 +16,12 @@ namespace VanillaSkillsExpandedExpanded
             Scribe_Values.Look(ref trackedGlobalXp, "trackedGlobalXp",0f);
             Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints",0);
             Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones",LookMode.Value);
+            Scribe_Collections.Look(ref claimedLevel15Skills, "claimedLevel15Skills", LookMode.Value);
 
+            if (claimedLevel15Skills == null)
+            {
+                claimedLevel15Skills = new List<string>();
+            }
             if (claimedMilestones == null)
             {
                 claimedMilestones = new List<int>();
@@ -60,9 +66,18 @@ namespace VanillaSkillsExpandedExpanded
             return true;
         }
 
-        public int TotalSkillPointsEarned()
+        
+
+        public bool HasClaimedLevel15Skill(string skillDefName)
         {
-            return claimedMilestones.Count;
+            return claimedLevel15Skills.Contains(skillDefName);
+        }
+        public void ClaimLevel15Skill(string skillDefName)
+        {
+            if (!claimedLevel15Skills.Contains(skillDefName))
+            {
+                claimedLevel15Skills.Add(skillDefName);
+            }
         }
     }
 }
