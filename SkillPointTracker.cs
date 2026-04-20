@@ -7,15 +7,15 @@ namespace VanillaSkillsExpandedExpanded
     {
         public float trackedGlobalXp;
         public int availableSkillPoints;
-        public List<int> claimedMilestones=new List<int>();
+        public List<int> claimedMilestones = new List<int>();
         public List<string> claimedLevel15Skills = new List<string>();
 
 
         public void ExposeData()
         {
-            Scribe_Values.Look(ref trackedGlobalXp, "trackedGlobalXp",0f);
-            Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints",0);
-            Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones",LookMode.Value);
+            Scribe_Values.Look(ref trackedGlobalXp, "trackedGlobalXp", 0f);
+            Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints", 0);
+            Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones", LookMode.Value);
             Scribe_Collections.Look(ref claimedLevel15Skills, "claimedLevel15Skills", LookMode.Value);
 
             if (claimedLevel15Skills == null)
@@ -36,7 +36,7 @@ namespace VanillaSkillsExpandedExpanded
             }
             trackedGlobalXp += xp;
         }
-        
+
         public bool HasClaimedMilestone(int milestoneId)
         {
             return claimedMilestones.Contains(milestoneId);
@@ -49,14 +49,14 @@ namespace VanillaSkillsExpandedExpanded
                 claimedMilestones.Add(milestoneId);
             }
         }
-        
+
         public bool AwardPointForMilestone(float milestoneValue, int milestoneId)
         {
             if (HasClaimedMilestone(milestoneId))
             {
                 return false;
             }
-            if (trackedGlobalXp< milestoneValue)
+            if (trackedGlobalXp < milestoneValue)
             {
                 return false;
             }
@@ -66,7 +66,10 @@ namespace VanillaSkillsExpandedExpanded
             return true;
         }
 
-        
+        public int ClaimedMilestoneCount()
+        {
+            return claimedMilestones.Count;
+        }
 
         public bool HasClaimedLevel15Skill(string skillDefName)
         {

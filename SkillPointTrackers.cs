@@ -1,18 +1,18 @@
 ﻿using RimWorld;
 using System;
 using System.Collections.Generic;
-using Verse; 
+using Verse;
 
 namespace VanillaSkillsExpandedExpanded
 {
     public static class SkillPointTrackers
     {
         private static readonly Dictionary<Pawn_SkillTracker, SkillPointTracker> trackers = new Dictionary<Pawn_SkillTracker, SkillPointTracker>();
-        
+        private static readonly Dictionary<Pawn, SkillPointTracker> pawnTrackers = new Dictionary<Pawn, SkillPointTracker>();
 
         public static SkillPointTracker GetTracker(Pawn pawn)
         {
-            if (pawn == null || pawn.skills== null)
+            if (pawn == null || pawn.skills == null)
             {
                 return null;
             }
@@ -27,7 +27,7 @@ namespace VanillaSkillsExpandedExpanded
                 return null;
             }
 
-            if (trackers.TryGetValue(skills,out SkillPointTracker tracker))  
+            if (trackers.TryGetValue(skills, out SkillPointTracker tracker))
             {
                 return tracker;
             }
@@ -43,7 +43,7 @@ namespace VanillaSkillsExpandedExpanded
             var skillPoints = new SkillPointTracker();
             trackers[skills] = skillPoints;
             return skillPoints;
-            
+
         }
 
         public static void SaveTracker(Pawn_SkillTracker skills)
@@ -58,8 +58,13 @@ namespace VanillaSkillsExpandedExpanded
             {
                 tracker = new SkillPointTracker();
             }
-            
+
             trackers[skills] = tracker;
         }
+
+        //public static Dictionary<Pawn, SkillPointTracker> AllTrackers() //Loops through and extracts the pawn from Pawn_SkillTracker
+        //{
+        //    return new Dictionary<Pawn, SkillPointTracker>(trackers)
+        //}
     }
 }

@@ -4,13 +4,13 @@ using RimWorld;
 using HarmonyLib;
 using VSE;
 using VSE.Expertise;
+using UnityEngine;
 
 
 namespace VanillaSkillsExpandedExpanded
 {
     public static class SkillPointPatches
     {
-
         public static void Do(Harmony harm)
         {
             harm.Patch(AccessTools.Constructor(typeof(Pawn_SkillTracker), new Type[] { typeof(Pawn) }),
@@ -23,7 +23,9 @@ namespace VanillaSkillsExpandedExpanded
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CheckSkillPoints)));
             harm.Patch(AccessTools.Method(typeof(ExpertiseTracker), nameof(ExpertiseTracker.AddExpertise)),
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SubtractSkillPoint)));
-          
+            harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)),
+              postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SkillPointDisplayUI)));
+            //harm.Patch(AccessTools.Method(typeof(SaveGameFilesUtility)))
         }
 
         public static void CreateTracker(Pawn_SkillTracker __instance)
@@ -38,6 +40,7 @@ namespace VanillaSkillsExpandedExpanded
 
         public static void TrackGlobalXp(SkillRecord __instance, float xp)
         {
+
             if (xp <= 0f)
             {
                 return;
@@ -52,13 +55,15 @@ namespace VanillaSkillsExpandedExpanded
                 return;
             }
             tracker.AddGlobalXp(xp);
+            int milestoneId = tracker.ClaimedMilestoneCount();
+            float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
 
-            if (tracker.AwardPointForMilestone(ExpandedSkillsMod.Settings.GlobalXpRequirement, 0))
+            if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId))
             {
-                Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort} Available Skill Points: {tracker.availableSkillPoints}");
-                ExpandedSkillsMod.Settings.GlobalXpRequirement *= 2;
+                Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
+
             }
-            if(__instance.GetLevel()>=15)
+            if (__instance.GetLevel() >= 15)
             {
                 string skillDefName = __instance.def.defName;
 
@@ -66,12 +71,13 @@ namespace VanillaSkillsExpandedExpanded
                 {
                     tracker.availableSkillPoints++;
                     tracker.ClaimLevel15Skill(skillDefName);
-                    Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort} Available Skill Points: {tracker.availableSkillPoints}");
+                    Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Level 15, Available Skill Points: {tracker.availableSkillPoints}");
                 }
             }
 
-            Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Global XP Requirement: {ExpandedSkillsMod.Settings.GlobalXpRequirement}, Progress: {tracker.trackedGlobalXp}/{ExpandedSkillsMod.Settings.GlobalXpRequirement}");
-            
+            //Debug 
+            //Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Milestone XP Requirement: {milestoneRequirement}, Progress: {tracker.trackedGlobalXp}/{milestoneRequirement}");
+
         }
 
         public static void CheckSkillPoints(Pawn pawn, ref string reason, ref bool __result)
@@ -92,28 +98,61 @@ namespace VanillaSkillsExpandedExpanded
                 reason = "Needs a specialization point";
                 __result = false;
             }
-           
+
         }
 
         public static void SubtractSkillPoint(ExpertiseTracker __instance)
         {
-            if (__instance == null||__instance.Pawn==null)
+            if (__instance == null || __instance.Pawn == null)
             {
                 return;
             }
-            
+
             SkillPointTracker tracker = SkillPointTrackers.GetTracker(__instance.Pawn);
-            if (tracker.availableSkillPoints == null)
+            if (tracker == null)
             {
                 return;
             }
-            
+
             if (tracker.availableSkillPoints > 0)
             {
                 tracker.availableSkillPoints--;
                 Log.Message($"Pawn: {__instance.Pawn.LabelShort}, Skill Point Subtracted, New Total Skill Points: {tracker.availableSkillPoints}");
             }
         }
-        
+
+        public static void SkillPointDisplayUI(Rect rect, Pawn pawn)
+        {
+            if (pawn == null || !pawn.IsColonist)
+            {
+                return;
+            }
+            SkillPointTracker tracker = SkillPointTrackers.GetTracker(pawn);
+            if (tracker == null)
+            {
+                return;
+            }
+
+            int milestoneId = tracker.ClaimedMilestoneCount();
+            float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
+            int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement)));
+
+            TextAnchor anchor = Text.Anchor;
+            GameFont font = Text.Font;
+            Text.Anchor = TextAnchor.UpperLeft;
+            Text.Font = GameFont.Small;
+
+
+            Rect skillPointNum = new Rect(rect.x + 320f, rect.y + 35f, 190f, 25f);
+            Widgets.Label(skillPointNum, $"SP: {tracker.availableSkillPoints} | Next: {milestoneProgress}%");
+
+            Text.Anchor = anchor;
+            Text.Font = font;
+        }
+
+        //public static void CSVAfterSave()
+        //{
+        //    CsvExporter.CSVExport(SkillPointTrackers.AllTrackers());
+        //}
     }
 }

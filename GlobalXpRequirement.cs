@@ -8,7 +8,7 @@ namespace VanillaSkillsExpandedExpanded
     public class GlobalXpRequirement
     {
 
-       
+
 
     }
 }
