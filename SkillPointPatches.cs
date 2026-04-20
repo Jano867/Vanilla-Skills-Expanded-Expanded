@@ -12,33 +12,36 @@ namespace VanillaSkillsExpandedExpanded
     public static class SkillPointPatches
     {
         public static void Do(Harmony harm)
-        {
-            harm.Patch(AccessTools.Constructor(typeof(Pawn_SkillTracker), new Type[] { typeof(Pawn) }),
+        { //Patch all the methods into the game here:
+            harm.Patch(AccessTools.Constructor(typeof(Pawn_SkillTracker), new Type[] { typeof(Pawn) }), //Creates the pawn tracker
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CreateTracker)));
-            harm.Patch(AccessTools.Method(typeof(Pawn_SkillTracker), nameof(Pawn_SkillTracker.ExposeData)),
+            harm.Patch(AccessTools.Method(typeof(Pawn_SkillTracker), nameof(Pawn_SkillTracker.ExposeData)), //Saves the pawn tracker
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SaveTracker)));
-            harm.Patch(AccessTools.Method(typeof(SkillRecord), nameof(SkillRecord.Learn)),
+            harm.Patch(AccessTools.Method(typeof(SkillRecord), nameof(SkillRecord.Learn)), // Tracks the Global XP a pawn earns
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(TrackGlobalXp)));
-            harm.Patch(AccessTools.Method(typeof(ExpertiseDef), nameof(ExpertiseDef.CanApplyOn)),
+            harm.Patch(AccessTools.Method(typeof(ExpertiseDef), nameof(ExpertiseDef.CanApplyOn)), //Checks if a pawn has enough skill points to purchase an expertise
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CheckSkillPoints)));
-            harm.Patch(AccessTools.Method(typeof(ExpertiseTracker), nameof(ExpertiseTracker.AddExpertise)),
+            harm.Patch(AccessTools.Method(typeof(ExpertiseTracker), nameof(ExpertiseTracker.AddExpertise)), //Subtracts a skill point upon selecting an expertise
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SubtractSkillPoint)));
-            harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)),
-              postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SkillPointDisplayUI)));
-            //harm.Patch(AccessTools.Method(typeof(SaveGameFilesUtility)))
+            harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)), //Adds the Skill Point Count and Progress to the pawn UI card
+              postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SkillPointDisplayUI)));                       
+            harm.Patch(AccessTools.Method(typeof(GameDataSaveLoader), nameof(GameDataSaveLoader.SaveGame)), //Saves pawn info to a CSV file after save
+                postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
+            //prefix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
+                //postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
         }
 
-        public static void CreateTracker(Pawn_SkillTracker __instance)
+        public static void CreateTracker(Pawn_SkillTracker __instance) //Creates the pawn tracker 
         {
             SkillPointTrackers.CreateTracker(__instance);
         }
 
-        public static void SaveTracker(Pawn_SkillTracker __instance)
+        public static void SaveTracker(Pawn_SkillTracker __instance) //Saves the pawn tracker
         {
             SkillPointTrackers.SaveTracker(__instance);
         }
 
-        public static void TrackGlobalXp(SkillRecord __instance, float xp)
+        public static void TrackGlobalXp(SkillRecord __instance, float xp) //Tracks how much XP a pawn earns on a global scale
         {
 
             if (xp <= 0f)
@@ -80,7 +83,7 @@ namespace VanillaSkillsExpandedExpanded
 
         }
 
-        public static void CheckSkillPoints(Pawn pawn, ref string reason, ref bool __result)
+        public static void CheckSkillPoints(Pawn pawn, ref string reason, ref bool __result) //Checks if a pawn has enough Skill Points to purchase an expertise
         {
             if (!__result)
             {
@@ -101,7 +104,7 @@ namespace VanillaSkillsExpandedExpanded
 
         }
 
-        public static void SubtractSkillPoint(ExpertiseTracker __instance)
+        public static void SubtractSkillPoint(ExpertiseTracker __instance) //Subtracts a skill point when purchasing an expertise
         {
             if (__instance == null || __instance.Pawn == null)
             {
@@ -121,7 +124,7 @@ namespace VanillaSkillsExpandedExpanded
             }
         }
 
-        public static void SkillPointDisplayUI(Rect rect, Pawn pawn)
+        public static void SkillPointDisplayUI(Rect rect, Pawn pawn) //Code for the display of Skill Points and Progress
         {
             if (pawn == null || !pawn.IsColonist)
             {
@@ -150,9 +153,12 @@ namespace VanillaSkillsExpandedExpanded
             Text.Font = font;
         }
 
-        //public static void CSVAfterSave()
-        //{
-        //    CsvExporter.CSVExport(SkillPointTrackers.AllTrackers());
-        //}
+        public static void CSVAfterSave()
+        {
+            CsvExporter.CSVExport(SkillPointTrackers.AllTrackers());
+            Log.Message("Save detected, writing CSV file");
+        }
+
+        
     }
 }

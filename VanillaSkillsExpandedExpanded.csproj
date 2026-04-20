@@ -61,7 +61,7 @@
       <HintPath>S:\SteamLibrary\steamapps\workshop\content\294100\2023507013\1.6\Assemblies\VEF.dll</HintPath>
     </Reference>
     <Reference Include="VSE">
-      <HintPath>S:\SteamLibrary\steamapps\workshop\content\294100\3400246558\1.6\Assemblies\VSE.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\294100\3400246558\1.6\Assemblies\VSE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
