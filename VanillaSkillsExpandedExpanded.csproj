@@ -69,6 +69,7 @@
     <Compile Include="ExpandedSkillsMod.cs" />
     <Compile Include="ExpandedSkillsSettings.cs" />
     <Compile Include="GlobalXpRequirement.cs" />
+    <Compile Include="ProgressionChoice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkillPointPatches.cs" />
     <Compile Include="SkillPointTracker.cs" />

@@ -16,7 +16,8 @@ namespace VanillaSkillsExpandedExpanded
     public class ExpandedSkillsSettings : ModSettings
     {
         public int GlobalXpRequirement = 100;
-
+        public bool EnableProgressionUI = true;
+        public bool EnableCSVExport = true;
         public override void ExposeData()
         {
             base.ExposeData();

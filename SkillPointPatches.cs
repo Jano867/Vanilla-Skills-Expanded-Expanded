@@ -23,12 +23,16 @@ namespace VanillaSkillsExpandedExpanded
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CheckSkillPoints)));
             harm.Patch(AccessTools.Method(typeof(ExpertiseTracker), nameof(ExpertiseTracker.AddExpertise)), //Subtracts a skill point upon selecting an expertise
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SubtractSkillPoint)));
-            harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)), //Adds the Skill Point Count and Progress to the pawn UI card
-              postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SkillPointDisplayUI)));                       
-            harm.Patch(AccessTools.Method(typeof(GameDataSaveLoader), nameof(GameDataSaveLoader.SaveGame)), //Saves pawn info to a CSV file after save
-                postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
-            //prefix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
-                //postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
+            if (ExpandedSkillsMod.Settings.EnableProgressionUI == true)
+            {
+                harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)), //Adds the Skill Point Count and Progress to the pawn UI card
+                  postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SkillPointDisplayUI)));
+            }
+            if (ExpandedSkillsMod.Settings.EnableCSVExport == true)
+            {
+                harm.Patch(AccessTools.Method(typeof(GameDataSaveLoader), nameof(GameDataSaveLoader.SaveGame)), //Saves pawn info to a CSV file after save
+                    postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
+            }
         }
 
         public static void CreateTracker(Pawn_SkillTracker __instance) //Creates the pawn tracker 
