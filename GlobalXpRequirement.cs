@@ -4,7 +4,7 @@ using RimWorld;
 using HarmonyLib;
 
 namespace VanillaSkillsExpandedExpanded
-{
+{/*
     public class GlobalXpRequirement
     {
         public static void Progression(ProgressionChoice choice)
@@ -47,8 +47,8 @@ namespace VanillaSkillsExpandedExpanded
         {
 
         }
-        public static List<float> CustomProgression = new List<float> { 270000f, }
+        //public static List<float> CustomProgression = new List<float> { 270000f, }
 
         //Need to make sure to defensively program in it so they can switch progression type mid game.
-    }
+    }*/
 }

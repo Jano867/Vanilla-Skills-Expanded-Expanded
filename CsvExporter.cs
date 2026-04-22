@@ -26,8 +26,16 @@ namespace VanillaSkillsExpandedExpanded
                 return null;
             }
             int milestoneId = tracker.ClaimedMilestoneCount();
+
+            float previousMilestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement * milestoneId;
+            //
+          
+            
             float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
-            int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement)));
+
+            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp - previousMilestoneRequirement) / (milestoneRequirement - previousMilestoneRequirement))));
+
+            //int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement))); //Wrong, subtract the previoius milestone requirement
             string claimedMilestones = string.Join("|", tracker.claimedMilestones);
             string claimedLevel15Skills = string.Join("|", tracker.claimedLevel15Skills);
             if (milestoneProgress > 100) //just in case 

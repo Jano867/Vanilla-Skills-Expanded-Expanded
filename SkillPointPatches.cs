@@ -139,10 +139,18 @@ namespace VanillaSkillsExpandedExpanded
             {
                 return;
             }
-
+            
             int milestoneId = tracker.ClaimedMilestoneCount();
+            
+            float previousMilestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement * milestoneId; //Need to fix this and make a list of all milestones instead of hard coding it.
+            if (milestoneId == 0)
+            {
+                previousMilestoneRequirement = 0;
+            }
+            Log.Message($"Previous Milestone Requirement: {previousMilestoneRequirement}");
             float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
-            int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement)));
+            //int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement)));
+            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp - previousMilestoneRequirement) / (milestoneRequirement - previousMilestoneRequirement))));
 
             TextAnchor anchor = Text.Anchor;
             GameFont font = Text.Font;

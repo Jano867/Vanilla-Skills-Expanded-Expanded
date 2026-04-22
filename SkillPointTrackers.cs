@@ -77,6 +77,7 @@ namespace VanillaSkillsExpandedExpanded
                              let tracker = getPawn.Value //Get the tracker for later
                              where skills != null && tracker != null //Make sure nothing is null
                              from pawn in PawnsFinder.AllMapsWorldAndTemporary_AliveOrDead //Get all pawns
+                             
                              where pawn != null && pawn.skills == skills //If pawn is not null and the pawns skills match the skills 
                              && pawn.IsColonist//Bunch of conditionals because IsColonist isn't enough to get rid of all the clutter
                              && pawn.Faction == Faction.OfPlayer
@@ -88,7 +89,24 @@ namespace VanillaSkillsExpandedExpanded
                                  Pawn = pawn, //Get pawn 
                                  Tracker = tracker //Get the tracker
                              };
-            return getTracker.ToDictionary(x => x.Pawn, x => x.Tracker); //Put the pawn and tracker in the dictionary
+            Dictionary<Pawn, SkillPointTracker> results = new Dictionary<Pawn, SkillPointTracker>();
+            foreach(var entry in getTracker)
+            {
+                Pawn pawn = entry.Pawn;
+                SkillPointTracker tracker = entry.Tracker;
+
+                if (results.ContainsKey(pawn))
+                {
+                    continue;
+                }
+                else
+                {
+                    results[pawn] = tracker;
+                }
+                
+            }
+            return results;
+
         }
 
     }
