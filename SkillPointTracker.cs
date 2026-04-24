@@ -6,14 +6,16 @@ namespace VanillaSkillsExpandedExpanded
     public class SkillPointTracker : IExposable
     {
         public float trackedGlobalXp;
+        public float historicalGlobalXp;
         public int availableSkillPoints;
         public List<int> claimedMilestones = new List<int>();
         public List<string> claimedLevel15Skills = new List<string>();
-
+        public List<float> ThresholdList = new List<float>();
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref trackedGlobalXp, "trackedGlobalXp", 0f);
+            Scribe_Values.Look(ref historicalGlobalXp, "historicalGlobalXp", 0f);
             Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints", 0);
             Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones", LookMode.Value);
             Scribe_Collections.Look(ref claimedLevel15Skills, "claimedLevel15Skills", LookMode.Value);
@@ -35,6 +37,7 @@ namespace VanillaSkillsExpandedExpanded
                 return;
             }
             trackedGlobalXp += xp;
+            historicalGlobalXp += xp;
         }
 
         public bool HasClaimedMilestone(int milestoneId)
@@ -63,6 +66,11 @@ namespace VanillaSkillsExpandedExpanded
 
             availableSkillPoints++;
             ClaimMilestone(milestoneId);
+
+            float nextXpRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.ProgressionChoice, SkillPointTracker);
+
+            ThresholdList.Add;
+            trackedGlobalXp = 0;
             return true;
         }
 
