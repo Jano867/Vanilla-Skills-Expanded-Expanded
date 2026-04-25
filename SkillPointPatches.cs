@@ -5,6 +5,8 @@ using HarmonyLib;
 using VSE;
 using VSE.Expertise;
 using UnityEngine;
+using System.Linq;
+using System.Diagnostics;
 
 
 namespace VanillaSkillsExpandedExpanded
@@ -62,13 +64,33 @@ namespace VanillaSkillsExpandedExpanded
                 return;
             }
             tracker.AddGlobalXp(xp);
+            
             int milestoneId = tracker.ClaimedMilestoneCount();
-            float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
+
+
+            
+            float milestoneRequirement;
+            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0)
+            {
+                milestoneRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, tracker);
+                tracker.thresholdList.Add(milestoneRequirement);
+            }
+            else if (ExpandedSkillsMod.Settings.SelectedProgression == ProgressionChoice.Custom)
+            {
+                milestoneRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, tracker);    
+            }
+            else
+            {
+                //Log.Message($"SkillPointPatches tracker is NOT null, setting to LAST");
+                milestoneRequirement = tracker.thresholdList.Last();
+            }
+
+            //Log.Message($"Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
 
             if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId))
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
-
+                //Log.Message($"Awarded Point Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
             }
             if (__instance.GetLevel() >= 15)
             {
@@ -83,7 +105,7 @@ namespace VanillaSkillsExpandedExpanded
             }
 
             //Debug 
-            //Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Milestone XP Requirement: {milestoneRequirement}, Progress: {tracker.trackedGlobalXp}/{milestoneRequirement}");
+            //Log.Message($"Pawn: {__instance.Pawn.LabelShort}, {xp}, Total Tracked XP: {tracker.trackedGlobalXp},Milestone XP Requirement: {milestoneRequirement}, Progress: {tracker.trackedGlobalXp}/{milestoneRequirement}, Progression: {ExpandedSkillsMod.Settings.SelectedProgression}");
 
         }
 
@@ -102,7 +124,7 @@ namespace VanillaSkillsExpandedExpanded
             }
             if (tracker.availableSkillPoints <= 0)
             {
-                reason = "Needs a specialization point";
+                reason = "Need a S.P";
                 __result = false;
             }
 
@@ -139,18 +161,28 @@ namespace VanillaSkillsExpandedExpanded
             {
                 return;
             }
-            
-            int milestoneId = tracker.ClaimedMilestoneCount();
-            
-            float previousMilestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement * milestoneId; //Need to fix this and make a list of all milestones instead of hard coding it.
-            if (milestoneId == 0)
+         
+
+            float milestoneRequirement;
+            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0)
             {
-                previousMilestoneRequirement = 0;
+
+                milestoneRequirement = ExpandedSkillsMod.Settings.InitialGlobalStart;
             }
-            Log.Message($"Previous Milestone Requirement: {previousMilestoneRequirement}");
-            float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
-            //int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement)));
-            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp - previousMilestoneRequirement) / (milestoneRequirement - previousMilestoneRequirement))));
+            else if (ExpandedSkillsMod.Settings.SelectedProgression == ProgressionChoice.Custom)
+            {
+                milestoneRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, tracker);
+            }
+            else
+            {
+                milestoneRequirement = tracker.thresholdList.Last();
+            }
+
+            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp / milestoneRequirement))));
+            if (milestoneProgress > 100)
+            {
+                milestoneProgress = 100;
+            }
 
             TextAnchor anchor = Text.Anchor;
             GameFont font = Text.Font;
@@ -159,7 +191,7 @@ namespace VanillaSkillsExpandedExpanded
 
 
             Rect skillPointNum = new Rect(rect.x + 320f, rect.y + 35f, 190f, 25f);
-            Widgets.Label(skillPointNum, $"SP: {tracker.availableSkillPoints} | Next: {milestoneProgress}%");
+            Widgets.Label(skillPointNum, $"S.P: {tracker.availableSkillPoints} | Next: {milestoneProgress}%");
 
             Text.Anchor = anchor;
             Text.Font = font;

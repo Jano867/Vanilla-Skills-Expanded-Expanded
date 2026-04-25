@@ -27,15 +27,19 @@ namespace VanillaSkillsExpandedExpanded
             }
             int milestoneId = tracker.ClaimedMilestoneCount();
 
-            float previousMilestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement * milestoneId;
-            //
-          
+            float milestoneRequirement;
+            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0)
+            {
+                milestoneRequirement = ExpandedSkillsMod.Settings.InitialGlobalStart;
+            }
+            else
+            {
+                milestoneRequirement = tracker.thresholdList.Last();
+            }
+
+            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp/milestoneRequirement ))));
+
             
-            float milestoneRequirement = ExpandedSkillsMod.Settings.GlobalXpRequirement + (200 * milestoneId);
-
-            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp - previousMilestoneRequirement) / (milestoneRequirement - previousMilestoneRequirement))));
-
-            //int milestoneProgress = ((int)(100 * (tracker.trackedGlobalXp / milestoneRequirement))); //Wrong, subtract the previoius milestone requirement
             string claimedMilestones = string.Join("|", tracker.claimedMilestones);
             string claimedLevel15Skills = string.Join("|", tracker.claimedLevel15Skills);
             if (milestoneProgress > 100) //just in case 
@@ -64,7 +68,7 @@ namespace VanillaSkillsExpandedExpanded
                 pawnName = pawn.LabelShort;
             }
 
-            return string.Join(",", $"\"{pawnName}\"", tracker.trackedGlobalXp, tracker.availableSkillPoints, $"\"{claimedMilestones}\"", $"\"{claimedLevel15Skills}\"", $"{milestoneProgress}%");
+            return string.Join(",", $"\"{pawnName}\"", tracker.trackedGlobalXp,tracker.historicalGlobalXp, tracker.availableSkillPoints, $"\"{claimedMilestones}\"", $"\"{claimedLevel15Skills}\"", $"{milestoneProgress}%");
         }
 
         public static void CSVExport(Dictionary<Pawn, SkillPointTracker> cSVDictionary)
@@ -72,7 +76,7 @@ namespace VanillaSkillsExpandedExpanded
             string path = GetExportPath();
             using (StreamWriter writer = new StreamWriter(path, false))
             {
-                writer.WriteLine("Pawn,TrackedGlobalXp,AvailableSkillPoints,ClaimedMilestones,ClaimedLevel15Skills,Progress");
+                writer.WriteLine("Pawn,TrackedGlobalXp,HistoricalGlobalXp,AvailableSkillPoints,ClaimedMilestones,ClaimedLevel15Skills,Progress");
                 foreach (KeyValuePair<Pawn, SkillPointTracker> entry in cSVDictionary)
                 {
                     Pawn pawn = entry.Key;

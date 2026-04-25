@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Verse;
 
 namespace VanillaSkillsExpandedExpanded
@@ -10,7 +11,7 @@ namespace VanillaSkillsExpandedExpanded
         public int availableSkillPoints;
         public List<int> claimedMilestones = new List<int>();
         public List<string> claimedLevel15Skills = new List<string>();
-        public List<float> ThresholdList = new List<float>();
+        public List<float> thresholdList = new List<float>();
 
         public void ExposeData()
         {
@@ -19,6 +20,7 @@ namespace VanillaSkillsExpandedExpanded
             Scribe_Values.Look(ref availableSkillPoints, "availableSkillPoints", 0);
             Scribe_Collections.Look(ref claimedMilestones, "claimedMilestones", LookMode.Value);
             Scribe_Collections.Look(ref claimedLevel15Skills, "claimedLevel15Skills", LookMode.Value);
+            Scribe_Collections.Look(ref thresholdList, "thresholdList", LookMode.Value);
 
             if (claimedLevel15Skills == null)
             {
@@ -27,6 +29,10 @@ namespace VanillaSkillsExpandedExpanded
             if (claimedMilestones == null)
             {
                 claimedMilestones = new List<int>();
+            }
+            if (thresholdList == null)
+            {
+                thresholdList = new List<float>();
             }
         }
 
@@ -65,12 +71,18 @@ namespace VanillaSkillsExpandedExpanded
             }
 
             availableSkillPoints++;
+            Log.Message($"B4 Claimed Skill Point, MilestoneID Before:{milestoneId} ClaimedMilestoneCount:{ClaimedMilestoneCount()}");
+
             ClaimMilestone(milestoneId);
-
-            float nextXpRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.ProgressionChoice, SkillPointTracker);
-
-            ThresholdList.Add;
+            //Log.Message($"After: {milestoneId}, Wasn't ClaimMilestone: ClaimedMilestoneCount:{ClaimedMilestoneCount()} ");
+            float nextXpRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, this);
+            //Log.Message($"Progression Ran, Next XP Requirement{nextXpRequirement}");
+            //Log.Message($"THRESHOLD COUNT B4: {thresholdList.Count}");
+            thresholdList.Add(nextXpRequirement);
+            //Log.Message($"Threshold List added to COUNT: {thresholdList.Count}");
+            //Log.Message($"tracked global xp before: {trackedGlobalXp}");
             trackedGlobalXp = 0;
+            //Log.Message($"tracked global xp after: {trackedGlobalXp}");
             return true;
         }
 

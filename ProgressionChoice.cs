@@ -13,5 +13,6 @@ namespace VanillaSkillsExpandedExpanded
         Curved,
         Exponential,
         Custom,
+        Debug,
     }
 }
