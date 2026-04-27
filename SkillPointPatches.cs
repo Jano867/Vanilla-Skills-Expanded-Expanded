@@ -36,7 +36,7 @@ namespace VanillaSkillsExpandedExpanded
                     postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
             }
         }
-
+        
         public static void CreateTracker(Pawn_SkillTracker __instance) //Creates the pawn tracker 
         {
             SkillPointTrackers.CreateTracker(__instance);
@@ -91,6 +91,7 @@ namespace VanillaSkillsExpandedExpanded
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
                 //Log.Message($"Awarded Point Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
+                Messages.Message($"Pawns have available Skill Points", MessageTypeDefOf.PositiveEvent);
             }
             if (__instance.GetLevel() >= 15)
             {

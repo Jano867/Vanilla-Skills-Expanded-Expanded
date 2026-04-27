@@ -71,6 +71,7 @@
     <Compile Include="GlobalXpRequirement.cs" />
     <Compile Include="ProgressionChoice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SkillPointAlert.cs" />
     <Compile Include="SkillPointPatches.cs" />
     <Compile Include="SkillPointTracker.cs" />
     <Compile Include="SkillPointTrackers.cs" />

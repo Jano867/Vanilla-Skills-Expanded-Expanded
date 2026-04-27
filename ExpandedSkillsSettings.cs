@@ -20,6 +20,7 @@ namespace VanillaSkillsExpandedExpanded
         public bool EnableProgressionUI = true;
         public bool EnableCSVExport = true;
         public int AmountOfTimesYouCanProgress = 100;
+        public bool EnableAlert = true;
 
         public float InitialGlobalStart = 200000;
 
