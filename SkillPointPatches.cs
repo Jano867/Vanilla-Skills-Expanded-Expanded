@@ -91,7 +91,7 @@ namespace VanillaSkillsExpandedExpanded
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
                 //Log.Message($"Awarded Point Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
-                Messages.Message($"Pawns have available Skill Points", MessageTypeDefOf.PositiveEvent);
+                Messages.Message($"Pawns have available Skill Points", MessageTypeDefOf.PositiveEvent); //What is this doing here !!!!!!!!!!!!!!!!!!!!!!!! TEST AND MAKE SURE ALERT WORKS SO I CAN GET RID OF THIS !!!!!!!!!!!!!!!!!!!!!!!
             }
             if (__instance.GetLevel() >= 15)
             {

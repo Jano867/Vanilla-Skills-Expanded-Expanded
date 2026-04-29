@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
+using static VanillaSkillsExpandedExpanded.GlobalXpRequirement;
+using static VanillaSkillsExpandedExpanded.GlobalXpRequirement.GetCurvedProgression;
 
 namespace VanillaSkillsExpandedExpanded
 {
@@ -13,41 +15,42 @@ namespace VanillaSkillsExpandedExpanded
         public static float Progression(ProgressionChoice choice, SkillPointTracker tracker)
         {
             int milestoneId = tracker.ClaimedMilestoneCount();
-            
-            float entry;
+
+            ProgressionRequirement requirement;
             switch (choice)
             {
                 case ProgressionChoice.Flat:
                     Log.Message("Flat Progression Chosen");
-                    entry = GlobalXpRequirement.GetFlatProgression(milestoneId, tracker);
+                    requirement = new GetFlatProgression();
+                    //entry = GlobalXpRequirement.GetFlatProgression(milestoneId, tracker);
                     break;
                 case ProgressionChoice.Linear:
                     Log.Message("Linear Progression Chosen");
-                    entry = GlobalXpRequirement.GetLinearProgression(milestoneId, tracker);
+                    requirement = new GetLinearProgression();
                     break;
                 case ProgressionChoice.Curved:
                     Log.Message("Curved Progression Chosen");
-                    entry = GlobalXpRequirement.GetCurvedProgression(milestoneId, tracker);
+                    requirement = new GetCurvedProgression();
                     break;
                 case ProgressionChoice.Exponential:
                     Log.Message("Exponential Progression Chosen");
-                    entry = GlobalXpRequirement.GetExponentialProgression(milestoneId, tracker);
+                    requirement = new GetExponentialProgression();
                     break;
                 case ProgressionChoice.Custom:
                     //Log.Message("Custom Progression Chosen");
-                    entry = GlobalXpRequirement.GetCustomProgression(milestoneId, tracker);
+                    requirement = new GetCustomProgression();
                     break;
                 case ProgressionChoice.Debug:
                     Log.Message($"Debug Progression Chosen");
-                    entry = GlobalXpRequirement.GetDebugProgression();
+                    requirement = new GetDebugProgression();
                     break;
                 default:
                     Log.Message($"DEFAULT CASE VALUE, ASSIGN A PROGRESSION CHOICE");
-                    entry = ExpandedSkillsMod.Settings.InitialGlobalStart;
+                    requirement =new GetCustomProgression();
                     break;
             }
             //Log.Message($"Returning value in Progression with choice: {choice}, Returned Value: {entry}");
-            return entry;
+            return requirement.GetRequirement(milestoneId,tracker);
         }
     }
 }

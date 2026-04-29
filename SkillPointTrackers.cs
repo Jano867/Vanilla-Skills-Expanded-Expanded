@@ -95,17 +95,17 @@ namespace VanillaSkillsExpandedExpanded
                 Pawn pawn = entry.Pawn;
                 SkillPointTracker tracker = entry.Tracker;
 
-                if (results.ContainsKey(pawn))
+                if (results.ContainsKey(pawn)) //Checks if the pawn, which is the key, has already been added
                 {
-                    continue;
+                    continue; //If so, continue
                 }
                 else
                 {
-                    results[pawn] = tracker;
+                    results[pawn] = tracker; //If not, add this pawn and its tracker to the Dictionary
                 }
                 
             }
-            return results;
+            return results; //Return the completed results dictionary
         }
     }
 }

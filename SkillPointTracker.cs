@@ -71,7 +71,7 @@ namespace VanillaSkillsExpandedExpanded
             }
 
             availableSkillPoints++;
-            Log.Message($"B4 Claimed Skill Point, MilestoneID Before:{milestoneId} ClaimedMilestoneCount:{ClaimedMilestoneCount()}");
+            //Log.Message($"B4 Claimed Skill Point, MilestoneID Before:{milestoneId} ClaimedMilestoneCount:{ClaimedMilestoneCount()}");
 
             ClaimMilestone(milestoneId);
             //Log.Message($"After: {milestoneId}, Wasn't ClaimMilestone: ClaimedMilestoneCount:{ClaimedMilestoneCount()} ");
