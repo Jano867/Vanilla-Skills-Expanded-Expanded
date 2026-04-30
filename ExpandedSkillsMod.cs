@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using VSE.Expertise;
 
 namespace VanillaSkillsExpandedExpanded
 {
@@ -35,7 +36,6 @@ namespace VanillaSkillsExpandedExpanded
         public override void DoSettingsWindowContents(Rect inRect)
         {
             base.DoSettingsWindowContents(inRect);
-
             var listing = new Listing_Standard();
             Rect rowRect = listing.GetRect(30f);
             Rect boxRight = rowRect.RightPart(0.3f);
@@ -48,7 +48,24 @@ namespace VanillaSkillsExpandedExpanded
 
             listing.Label("\nProgression Settings:\n");
             
+            if (listing.ButtonTextLabeled("Max Expertise", Settings.MaxExpertiseVSEE.ToString()))
+            {
+                List<FloatMenuOption> expertiseList = new List<FloatMenuOption>();
+                int expertiseCount = DefDatabase<ExpertiseDef>.DefCount;
+                for(int i =1; i <= expertiseCount; i++)
+                {
+                    int value = i;
+                    expertiseList.Add(new FloatMenuOption(i.ToString(), () =>
+                    {
+                        Settings.MaxExpertiseVSEE = value;
+                        Settings.Write();
+                        SkillPointPatches.SyncMaxExpertiseToVSE();
+                    }));
+                }
+                Find.WindowStack.Add(new FloatMenu(expertiseList));
+            }
             listing.TextFieldNumericLabeled(startingDescription.PadLeft(30), ref Settings.InitialGlobalStart, ref bufferStartingPoint);    
+            
             if (listing.ButtonTextLabeled("Progression Choice", ExpandedSkillsMod.Settings.SelectedProgression.ToString()))
             {
                 List<FloatMenuOption> progressionChoice = new List<FloatMenuOption>();
@@ -62,9 +79,13 @@ namespace VanillaSkillsExpandedExpanded
                 }
                 Find.WindowStack.Add(new FloatMenu(progressionChoice.ToList()));
             }
+            
             listing.TextFieldNumericLabeled<int>(linearDescription.PadLeft(30), ref Settings.LinearAddBy, ref bufferLinear);
+            
             listing.TextFieldNumericLabeled<float>(multiplyDescription.PadLeft(30), ref Settings.CurvedMultiplyBy, ref bufferMultiply);
+            
             listing.TextFieldNumericLabeled<float>(exponentialDescription.PadLeft(30), ref Settings.ExponentProgression, ref bufferExponential); ;
+            
             listing.End();
         }
         

@@ -25,6 +25,10 @@ namespace VanillaSkillsExpandedExpanded
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CheckSkillPoints)));
             harm.Patch(AccessTools.Method(typeof(ExpertiseTracker), nameof(ExpertiseTracker.AddExpertise)), //Subtracts a skill point upon selecting an expertise
                 postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SubtractSkillPoint)));
+            harm.Patch(AccessTools.Method(typeof(SkillsMod), nameof(SkillsMod.DoSettingsWindowContents)),
+                postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(SyncMaxExpertiseToVSEE)));
+
+            
             if (ExpandedSkillsMod.Settings.EnableProgressionUI == true)
             {
                 harm.Patch(AccessTools.Method(typeof(CharacterCardUtility), nameof(CharacterCardUtility.DrawCharacterCard)), //Adds the Skill Point Count and Progress to the pawn UI card
@@ -35,8 +39,11 @@ namespace VanillaSkillsExpandedExpanded
                 harm.Patch(AccessTools.Method(typeof(GameDataSaveLoader), nameof(GameDataSaveLoader.SaveGame)), //Saves pawn info to a CSV file after save
                     postfix: new HarmonyMethod(typeof(SkillPointPatches), nameof(CSVAfterSave)));
             }
+            
         }
+
         
+
         public static void CreateTracker(Pawn_SkillTracker __instance) //Creates the pawn tracker 
         {
             SkillPointTrackers.CreateTracker(__instance);
@@ -70,30 +77,39 @@ namespace VanillaSkillsExpandedExpanded
 
             
             float milestoneRequirement;
-            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0)
+            
+            //Determine what the milestone is logic   
+            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0) //Create the milestone if it doesn't exist
             {
                 milestoneRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, tracker);
                 tracker.thresholdList.Add(milestoneRequirement);
             }
-            else if (ExpandedSkillsMod.Settings.SelectedProgression == ProgressionChoice.Custom)
+            else if (ExpandedSkillsMod.Settings.SelectedProgression == ProgressionChoice.Custom) //Allow the user to switch to the custom progression whenever they want for stability sake
             {
                 milestoneRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, tracker);    
             }
-            else
+            else //The requirement is the last of the list to always be up to date
             {
                 //Log.Message($"SkillPointPatches tracker is NOT null, setting to LAST");
                 milestoneRequirement = tracker.thresholdList.Last();
             }
 
             //Log.Message($"Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
+            
+            string nick= __instance.Pawn.LabelShort; //Getting the nickname of a pawn
+            if (__instance.Pawn.Name is NameTriple name)
+            {
+                nick = name.Nick;
+            }
 
-            if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId))
+            if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId)) //Awarding a point logic
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
                 //Log.Message($"Awarded Point Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
-                Messages.Message($"Pawns have available Skill Points", MessageTypeDefOf.PositiveEvent); //What is this doing here !!!!!!!!!!!!!!!!!!!!!!!! TEST AND MAKE SURE ALERT WORKS SO I CAN GET RID OF THIS !!!!!!!!!!!!!!!!!!!!!!!
+                Messages.Message($"{nick} Earned a Skill Point", MessageTypeDefOf.PositiveEvent); 
             }
-            if (__instance.GetLevel() >= 15)
+            
+            if (__instance.GetLevel() >= 15) //Award a point when a pawn reaches level 15 so it keeps VSE core experience the same
             {
                 string skillDefName = __instance.def.defName;
 
@@ -112,7 +128,7 @@ namespace VanillaSkillsExpandedExpanded
 
         public static void CheckSkillPoints(Pawn pawn, ref string reason, ref bool __result) //Checks if a pawn has enough Skill Points to purchase an expertise
         {
-            if (!__result)
+            if (!__result) //Not enough points
             {
                 return;
             }
@@ -204,6 +220,41 @@ namespace VanillaSkillsExpandedExpanded
             Log.Message("Save detected, writing CSV file");
         }
 
-        
+
+
+        private static bool isUpdating = false;
+        public static void SyncMaxExpertiseToVSE()
+        {
+            if (isUpdating) return;
+            isUpdating = true;
+            try
+            {
+                SkillsMod.Settings.MaxExpertise = ExpandedSkillsMod.Settings.MaxExpertiseVSEE;
+                SkillsMod.Settings.Write();
+
+            }
+            finally
+            {
+                isUpdating = false;
+            }
+        }
+        public static void SyncMaxExpertiseToVSEE()
+        {
+
+            if (isUpdating) return;
+            isUpdating = true;
+            try
+            {
+                ExpandedSkillsMod.Settings.MaxExpertiseVSEE = SkillsMod.Settings.MaxExpertise;
+                ExpandedSkillsMod.Settings.Write();
+
+            }
+            finally
+            {
+                isUpdating = false;
+            }
+        }
+
+
     }
 }

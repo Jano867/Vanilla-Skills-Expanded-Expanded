@@ -32,9 +32,9 @@ namespace VanillaSkillsExpandedExpanded
         {
             int count = PawnsWithSkillPoints.Count();
             if (count == 1)
-                return "VSEE.SkillPointAvailable".Translate();
+                return "Pawn Has Available Skill Point";//.Translate();
             else if (count >= 2)
-                return "VSEE.SkillPointsAvailableMultiple".Translate();
+                return "Pawns Have Available Skill Points";//.Translate();
             else
                 return null;
         }

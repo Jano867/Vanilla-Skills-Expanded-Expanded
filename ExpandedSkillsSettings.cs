@@ -28,6 +28,7 @@ namespace VanillaSkillsExpandedExpanded
         public float CurvedMultiplyBy = 1.5f;
         public ProgressionChoice SelectedProgression = ProgressionChoice.Custom;
         public float ExponentProgression = 1.01f; //BE EXTREMELY CAREFUL, WILL BALOON VERY QUICKLY keep around 1.01
+        public int MaxExpertiseVSEE = 3;
 
         
 
@@ -44,6 +45,7 @@ namespace VanillaSkillsExpandedExpanded
             Scribe_Values.Look(ref CurvedMultiplyBy, "CurvedMultiplyBy");
             Scribe_Values.Look(ref SelectedProgression, "SelectedProgression");
             Scribe_Values.Look(ref ExponentProgression, "ExponentProgression");
+            Scribe_Values.Look(ref MaxExpertiseVSEE, "MaxExpertiseVSEE");
         }
     }
 }
