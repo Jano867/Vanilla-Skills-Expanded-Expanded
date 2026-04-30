@@ -23,7 +23,6 @@ namespace VanillaSkillsExpandedExpanded
 
         //I want to deal with the possible change in progression by passing through the previous milestone, then change the requirements to meet the new threshold based on that
         //I need to figure out how to store the pawns progression data. I think I will make one list that only ever exists, not a bunch of seperate lists for different progression choices
-        //This way, the program never awards a point if the player switches, or atleast it doesn't award too many points
         public class GetFlatProgression : ProgressionRequirement
         {
             public override float GetRequirement(int milestoneId, SkillPointTracker tracker)
@@ -83,7 +82,7 @@ namespace VanillaSkillsExpandedExpanded
                     }
                 }
             }
-            public class GetCustomProgression : ProgressionRequirement//Checked Kind of Working just don't use with logs turned on
+            public class GetCustomProgression : ProgressionRequirement
             {//This is used as a stable fallback no matter how out of hand the other progression styles get
 
                 public override float GetRequirement(int milestoneId, SkillPointTracker tracker)

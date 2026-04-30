@@ -71,18 +71,11 @@ namespace VanillaSkillsExpandedExpanded
             }
 
             availableSkillPoints++;
-            //Log.Message($"B4 Claimed Skill Point, MilestoneID Before:{milestoneId} ClaimedMilestoneCount:{ClaimedMilestoneCount()}");
 
             ClaimMilestone(milestoneId);
-            //Log.Message($"After: {milestoneId}, Wasn't ClaimMilestone: ClaimedMilestoneCount:{ClaimedMilestoneCount()} ");
             float nextXpRequirement = UnlockRequirement.Progression(ExpandedSkillsMod.Settings.SelectedProgression, this);
-            //Log.Message($"Progression Ran, Next XP Requirement{nextXpRequirement}");
-            //Log.Message($"THRESHOLD COUNT B4: {thresholdList.Count}");
             thresholdList.Add(nextXpRequirement);
-            //Log.Message($"Threshold List added to COUNT: {thresholdList.Count}");
-            //Log.Message($"tracked global xp before: {trackedGlobalXp}");
             trackedGlobalXp = 0;
-            //Log.Message($"tracked global xp after: {trackedGlobalXp}");
             return true;
         }
 

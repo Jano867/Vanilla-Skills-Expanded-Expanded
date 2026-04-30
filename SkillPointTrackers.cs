@@ -10,7 +10,6 @@ namespace VanillaSkillsExpandedExpanded
     public static class SkillPointTrackers
     {
         public static readonly Dictionary<Pawn_SkillTracker, SkillPointTracker> trackers = new Dictionary<Pawn_SkillTracker, SkillPointTracker>();
-        //private static readonly Dictionary<Pawn, SkillPointTracker> allTrackers = new Dictionary<Pawn, SkillPointTracker>();
 
         public static SkillPointTracker GetTracker(Pawn pawn)
         {
@@ -32,7 +31,6 @@ namespace VanillaSkillsExpandedExpanded
             if (trackers.TryGetValue(skills, out SkillPointTracker tracker))
             {
                 return tracker;
-                //return pawnTrackers;
             }
             return CreateTracker(skills);
         }
@@ -45,7 +43,6 @@ namespace VanillaSkillsExpandedExpanded
             }
             var skillPoints = new SkillPointTracker();
             trackers[skills] = skillPoints;
-            //pawnTrackers[skills] = skillPoints;
             return skillPoints;
 
         }
@@ -57,16 +54,13 @@ namespace VanillaSkillsExpandedExpanded
                 return;
             }
             SkillPointTracker tracker = GetTracker(skills);
-            //SkillPointTracker pawnTracker = GetTracker(skills);
             Scribe_Deep.Look(ref tracker, "skillPointTracker");
             if (tracker == null)
             {
                 tracker = new SkillPointTracker();
 
             }
-
             trackers[skills] = tracker;
-            //pawnTrackers[skills] = tracker;
         }
 
 

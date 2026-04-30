@@ -90,11 +90,9 @@ namespace VanillaSkillsExpandedExpanded
             }
             else //The requirement is the last of the list to always be up to date
             {
-                //Log.Message($"SkillPointPatches tracker is NOT null, setting to LAST");
                 milestoneRequirement = tracker.thresholdList.Last();
             }
 
-            //Log.Message($"Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
             
             string nick= __instance.Pawn.LabelShort; //Getting the nickname of a pawn
             if (__instance.Pawn.Name is NameTriple name)
@@ -105,7 +103,6 @@ namespace VanillaSkillsExpandedExpanded
             if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId)) //Awarding a point logic
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
-                //Log.Message($"Awarded Point Milestone Requirement: {milestoneRequirement}, MilestoneID{milestoneId}");
                 Messages.Message($"{nick} Earned a Skill Point", MessageTypeDefOf.PositiveEvent); 
             }
             

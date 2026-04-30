@@ -11,7 +11,6 @@ namespace VanillaSkillsExpandedExpanded
 {
     public class UnlockRequirement
     {
-        private static float InitialGlobalStart => ExpandedSkillsMod.Settings.InitialGlobalStart;
         public static float Progression(ProgressionChoice choice, SkillPointTracker tracker)
         {
             int milestoneId = tracker.ClaimedMilestoneCount();
@@ -22,7 +21,6 @@ namespace VanillaSkillsExpandedExpanded
                 case ProgressionChoice.Flat:
                     Log.Message("Flat Progression Chosen");
                     requirement = new GetFlatProgression();
-                    //entry = GlobalXpRequirement.GetFlatProgression(milestoneId, tracker);
                     break;
                 case ProgressionChoice.Linear:
                     Log.Message("Linear Progression Chosen");
@@ -37,7 +35,6 @@ namespace VanillaSkillsExpandedExpanded
                     requirement = new GetExponentialProgression();
                     break;
                 case ProgressionChoice.Custom:
-                    //Log.Message("Custom Progression Chosen");
                     requirement = new GetCustomProgression();
                     break;
                 case ProgressionChoice.Debug:
@@ -49,7 +46,6 @@ namespace VanillaSkillsExpandedExpanded
                     requirement =new GetCustomProgression();
                     break;
             }
-            //Log.Message($"Returning value in Progression with choice: {choice}, Returned Value: {entry}");
             return requirement.GetRequirement(milestoneId,tracker);
         }
     }

@@ -15,15 +15,11 @@ namespace VanillaSkillsExpandedExpanded
 {
     public class ExpandedSkillsSettings : ModSettings
     {
-        //Most of these are temporary until I get a config page going
         public int GlobalXpRequirement = 200000; //Fallback value that I used before I implimented the different settings
         public bool EnableProgressionUI = true;
         public bool EnableCSVExport = true;
-        //public int AmountOfTimesYouCanProgress = 100;
         public bool EnableAlert = true;
-
         public float InitialGlobalStart = 200000;
-
         public int LinearAddBy = 50000;
         public float CurvedMultiplyBy = 1.5f;
         public ProgressionChoice SelectedProgression = ProgressionChoice.Custom;
@@ -38,7 +34,6 @@ namespace VanillaSkillsExpandedExpanded
             Scribe_Values.Look(ref GlobalXpRequirement, "GlobalXpRequirement");
             Scribe_Values.Look(ref EnableProgressionUI, "EnableProgressionUI");
             Scribe_Values.Look(ref EnableCSVExport, "EnableCSVExport");
-            //Scribe_Values.Look(ref AmountOfTimesYouCanProgress, "AmountOfTimesYouCanProgress");
             Scribe_Values.Look(ref EnableAlert, "EnableAlert");
             Scribe_Values.Look(ref InitialGlobalStart, "InitialGlobalStart");
             Scribe_Values.Look(ref LinearAddBy, "LinearAddBy");
