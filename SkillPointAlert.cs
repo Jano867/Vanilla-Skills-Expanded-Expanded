@@ -45,7 +45,14 @@ namespace VanillaSkillsExpandedExpanded
 
         public override TaggedString GetExplanation()
         {
-            return "VSEE.SkillPointAvailableDesc".Translate() + PawnsWithSkillPoints.Select(p => p.NameFullColored.Resolve()).ToLineList("  ");
+            int count = pawnsWithSkillPoints.Count();
+            if (count == 1)            
+                return "Pawn Has A Skill Point: " + PawnsWithSkillPoints.Select(p => p.NameFullColored.Resolve()).ToLineList("  ");
+            
+            else if (count >= 2)
+                return "Pawns With Skill Points: " + PawnsWithSkillPoints.Select(p => p.NameFullColored.Resolve()).ToLineList("  ");
+            
+            else return null;
         }
     }
 }

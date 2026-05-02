@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsvExporter.cs" />
+    <Compile Include="DebugButtons.cs" />
     <Compile Include="ExpandedSkillsMod.cs" />
     <Compile Include="ExpandedSkillsSettings.cs" />
     <Compile Include="GlobalXpRequirement.cs" />

@@ -7,6 +7,7 @@ using VSE.Expertise;
 using UnityEngine;
 using System.Linq;
 using System.Diagnostics;
+using LudeonTK;
 
 
 namespace VanillaSkillsExpandedExpanded
@@ -93,17 +94,11 @@ namespace VanillaSkillsExpandedExpanded
                 milestoneRequirement = tracker.thresholdList.Last();
             }
 
-            
-            string nick= __instance.Pawn.LabelShort; //Getting the nickname of a pawn
-            if (__instance.Pawn.Name is NameTriple name)
-            {
-                nick = name.Nick;
-            }
 
             if (tracker.AwardPointForMilestone(milestoneRequirement, milestoneId)) //Awarding a point logic
             {
                 Log.Message($"Awarded Skill Point to {__instance.Pawn.LabelShort}, Reached Milestone Requirement, Available Skill Points: {tracker.availableSkillPoints}");
-                Messages.Message($"{nick} Earned a Skill Point", MessageTypeDefOf.PositiveEvent); 
+                Messages.Message($"{__instance.Pawn.LabelShort} Earned a Skill Point", MessageTypeDefOf.PositiveEvent); 
             }
             
             if (__instance.GetLevel() >= 15) //Award a point when a pawn reaches level 15 so it keeps VSE core experience the same
@@ -138,7 +133,7 @@ namespace VanillaSkillsExpandedExpanded
             }
             if (tracker.availableSkillPoints <= 0)
             {
-                reason = "Need a S.P";
+                reason = "Insufficient SP";
                 __result = false;
             }
 
@@ -166,6 +161,10 @@ namespace VanillaSkillsExpandedExpanded
 
         public static void SkillPointDisplayUI(Rect rect, Pawn pawn) //Code for the display of Skill Points and Progress
         {
+            if (Current.ProgramState != ProgramState.Playing)
+            {
+                return;
+            }
             if (pawn == null || !pawn.IsColonist)
             {
                 return;
@@ -175,12 +174,11 @@ namespace VanillaSkillsExpandedExpanded
             {
                 return;
             }
-         
-
+            
             float milestoneRequirement;
-            if (tracker.thresholdList == null || tracker.thresholdList.Count == 0)
+            int milestoneProgress;
+            if (tracker.thresholdList.Count == 0||tracker.thresholdList==null)
             {
-
                 milestoneRequirement = ExpandedSkillsMod.Settings.InitialGlobalStart;
             }
             else if (ExpandedSkillsMod.Settings.SelectedProgression == ProgressionChoice.Custom)
@@ -192,19 +190,15 @@ namespace VanillaSkillsExpandedExpanded
                 milestoneRequirement = tracker.thresholdList.Last();
             }
 
-            int milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp / milestoneRequirement))));
-            if (milestoneProgress > 100)
-            {
-                milestoneProgress = 100;
-            }
+            milestoneProgress = ((int)(100 * ((tracker.trackedGlobalXp / milestoneRequirement))));
 
             TextAnchor anchor = Text.Anchor;
             GameFont font = Text.Font;
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;
 
-
             Rect skillPointNum = new Rect(rect.x + 320f, rect.y + 35f, 190f, 25f);
+            //Rect skillPointNum = new Rect(rect.xMax - 625f, rect.y + 35f, 190f, 25f);
             Widgets.Label(skillPointNum, $"S.P: {tracker.availableSkillPoints} | Next: {milestoneProgress}%");
 
             Text.Anchor = anchor;
